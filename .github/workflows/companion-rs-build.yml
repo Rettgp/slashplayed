@@ -59,6 +59,7 @@ jobs:
       PYTHON: ${{ matrix.python }}
       SP_KIT_SHA256: ${{ inputs.kit_sha256 }}
       SP_RELEASE_TAG: ${{ inputs.release_tag }}
+      SP_REPO: ${{ github.repository }}
     steps:
       # Line endings as committed (ci.yml says why).
       - name: Keep line endings

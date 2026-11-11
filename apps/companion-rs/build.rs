@@ -17,6 +17,7 @@ fn main() {
     let src = zsign.join("src");
     println!("cargo:rerun-if-env-changed=SP_ZSIGN_SRC");
     println!("cargo:rerun-if-env-changed=SP_KIT_SHA256");
+    println!("cargo:rerun-if-env-changed=SP_REPO");
     println!("cargo:rerun-if-changed=zsign/spzsign_host.cpp");
     // The patch's InitData is what the entry point calls; its absence means an unpatched or missing tree.
     let openssl_h = std::fs::read_to_string(src.join("openssl.h")).unwrap_or_default();

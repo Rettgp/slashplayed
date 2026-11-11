@@ -27,7 +27,8 @@ pub fn release_tag() -> String {
 }
 
 pub const ASSET: &str = "slashplayed-device-kit.zip";
-const REPO: &str = "paulstraw/slashplayed";
+// Set SP_REPO at build time so forks download their own kit.
+const REPO: &str = match option_env!("SP_REPO") { Some(r) => r, None => "paulstraw/slashplayed" };
 /// The platform this tool installs for: iPad and iPhone. Vision Pro stays Mac-only (docs).
 pub const PLATFORM: &str = "ios";
 /// The JIT helper's bundle, inside the app (ClientAssembly.helperName).
