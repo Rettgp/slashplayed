@@ -372,12 +372,16 @@ pub async fn profiles(
     let app = session.download_team_provisioning_profile(team, app_id, None).await?;
     let app_bytes: Vec<u8> = app.encoded_profile.as_ref().to_vec();
     let parsed = profile::Profile::parse(&app_bytes)?;
-    let free = parsed.is_free() || app.is_free_provisioning_profile == Some(true);
+    let mut free = parsed.is_free() || app.is_free_provisioning_profile == Some(true);
     if let (false, Eva::Refused(status)) = (free, eva) {
-        bail!(
-            "Apple refused extended-virtual-addressing on {} (HTTP {status} to the capability request), but its profile isn't a free team's",
+        // An expired paid membership lands here: a long-lived profile, but no extended-virtual-addressing.
+        // Sign as a free team (increased-memory-limit alone) rather than stop.
+        say(&format!(
+            "Apple refused extended-virtual-addressing on {} (HTTP {status}) but its profile isn't a free team's \
+             (an expired membership?): signing as a free team",
             team.team_id
-        );
+        ));
+        free = true;
     }
     let want: &[&str] = if free { &[IML] } else { &[IML, EVA] };
     profile::check(&parsed, &team.team_id, &app_id.identifier, udid, &id.cert_der, want, &[])?;
